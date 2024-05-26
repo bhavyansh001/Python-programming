@@ -1,0 +1,201 @@
+In Python 3, the result of / is always a floating-point value, and a new operator // is introduced to do integer division; this behaviour can be enabled in Python 2.2+ using from __future__ import division.
+
+In Python, == compares by value, in contrast to Java, where it compares by reference. (Value comparisons in Java use the equals() method.) Python's is operator may be used to compare object identities (comparison by reference). Comparisons may be chained, for example a <= b <= c.
+
+Python uses the words and, or, not for its boolean operators rather than the symbolic &&, ||, ! used in C.
+
+Python has a type of expression known as a list comprehension. Python 2.4 extended list comprehensions into a more general expression known as a generator expression.
+
+Conditional expressions in Python are written as x if c else y (different in order of operands from the ?: operator common to many other languages).
+
+Python 2 has a "string format" operator %. This functions analogous to printf format strings in C, e.g. "foo=%s bar=%d" % ("blah", 2) evaluates to "foo=blah bar=2". In Python 3, this was obsoleted in favour of the format() method of the str class, e.g. "foo={0} bar={1}".format("blah", 2).
+
+Triple-quoted strings, which begin and end with a series of three single or double quotation marks, may span multiple lines and function like here documents in shells, Perl and Ruby.
+
+Another useful feature of tuples is that they can appear on the left side of an equal sign in a Python assignment statement, which allows you to easily swap the values of two variables. For example, the statement x, y = y, x swaps the values of x and y, without requiring a temporary variable.
+
+In summary, lists and tuples are both useful for storing collections of elements in Python, but lists are mutable while tuples are immutable. Lists cannot be used as keys in dictionaries, but tuples can, as long as their elements are themselves immutable. Tuples can also be used to swap the values of two variables in a Python assignment statement.
+
+ 7 // 3 is 2, but (−7) // 3 is −3, this is floor division, not the classic division
+
+ Python methods have an explicit self parameter to access instance data, in contrast to the implicit self in some other object-oriented programming languages (for example, Java, C++ or Ruby).
+
+CPython compiles Python programs into intermediate bytecode,[65] which are then executed by the virtual machine. Jython compiles the Python program into Java byte code, which can then be executed by every Java Virtual Machine implementation. This also enables the use of Java class library functions from the Python program.
+
+The development team monitor the state of the code by running the large unit test suite during development, and using the BuildBot continuous integration system.
+
+ REPL, short for read-evaluate-print-loop.
+
+*Tutorial from documentation*
+
+EOF chaacter: ctrl + D, quit()
+
+In interactive mode, the last printed expression is assigned to the variable _. This means that when you are using Python as a desk calculator, it is somewhat easier to continue calculations, for example:
+
+tax = 12.5 / 100
+price = 100.50
+price * tax
+12.5625
+price + _
+113.0625
+round(_, 2)
+113.06
+
+If you don’t want characters prefaced by \ to be interpreted as special characters, you can use raw strings by adding an r before the first quote:
+
+print('C:\some\name')  # here \n means newline!
+C:\some
+ame
+print(r'C:\some\name')  # note the r before the quote
+C:\some\name
+There is one subtle aspect to raw strings: a raw string may not end in an odd number of \ characters
+
+String literals can span multiple lines. One way is using triple-quotes: """...""" or '''...'''
+
+3 * 'un' + 'ium'
+'unununium'
+
+word = 'Python'
+word[0]  # character in position 0
+'P'
+word[5]  # character in position 5
+'n'
+Indices may also be negative numbers, to start counting from the right:
+
+>>>
+word[-1]  # last character
+'n'
+word[-2]  # second-last character
+'o'
+word[-6]
+'P'
+Note that since -0 is the same as 0, negative indices start from -1.
+
+In addition to indexing, slicing is also supported. While indexing is used to obtain individual characters, slicing allows you to obtain substring:
+
+>>>
+word[0:2]  # characters from position 0 (included) to 2 (excluded)
+'Py'
+word[2:5]  # characters from position 2 (included) to 5 (excluded)
+'tho'
+Slice indices have useful defaults; an omitted first index defaults to zero, an omitted second index defaults to the size of the string being sliced.
+
+>>>
+word[:2]   # character from the beginning to position 2 (excluded)
+'Py'
+word[4:]   # characters from position 4 (included) to the end
+'on'
+word[-2:]  # characters from the second-last (included) to the end
+'on'
+
+Attempting to use an index that is too large will result in an error, however, out of range slice indexes are handled gracefully when used for slicing:
+
+word[4:42]
+'on'
+word[42:]
+''
+Python strings cannot be changed — they are immutable. Therefore, assigning to an indexed position in the string results in an error:
+
+word[0] = 'J'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'str' object does not support item assignment
+word[2:] = 'py'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'str' object does not support item assignment
+If you need a different string, you should create a new one:
+
+>>>
+'J' + word[1:]
+'Jython'
+word[:2] + 'py'
+'Pypy'
+
+s = 'supercalifragilisticexpialidocious'
+len(s)
+34
+
+Like strings (and all other built-in sequence types), lists can be indexed and sliced. Lists = arrays
+All slice operations return a new list containing the requested elements. This means that the following slice returns a shallow copy of the list:
+squares = [1, 4, 9, 16, 25]
+squares[:]
+[1, 4, 9, 16, 25]
+A shallow copy constructs a new compound object and then (to the extent possible) inserts references into it to the objects found in the original.
+A deep copy constructs a new compound object and then, recursively, inserts copies into it of the objects found in the original.
+
+Unlike strings, which are immutable, lists are a mutable type, i.e. it is possible to change their content:
+
+cubes = [1, 8, 27, 65, 125]  # something's wrong here
+4 ** 3  # the cube of 4 is 64, not 65!
+64
+cubes[3] = 64  # replace the wrong value
+cubes
+[1, 8, 27, 64, 125]
+You can also add new items at the end of the list, by using the append() method (we will see more about methods later):
+
+cubes.append(216)  # add the cube of 6
+cubes.append(7 ** 3)  # and the cube of 7
+cubes
+[1, 8, 27, 64, 125, 216, 343]
+
+Assignment to slices is also possible, and this can even change the size of the list or clear it entirely:
+
+letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+letters
+['a', 'b', 'c', 'd', 'e', 'f', 'g']
+# replace some values
+letters[2:5] = ['C', 'D', 'E']
+letters
+['a', 'b', 'C', 'D', 'E', 'f', 'g']
+# now remove them
+letters[2:5] = []
+letters
+['a', 'b', 'f', 'g']
+# clear the list by replacing all the elements with an empty list
+letters[:] = []
+letters
+[]
+The built-in function len() also applies to lists:
+letters = ['a', 'b', 'c', 'd']
+len(letters)
+4
+
+It is possible to nest lists (create lists containing other lists), for example:
+
+a = ['a', 'b', 'c']
+n = [1, 2, 3]
+x = [a, n]
+x
+[['a', 'b', 'c'], [1, 2, 3]]
+x[0]
+['a', 'b', 'c']
+x[0][1]
+'b'
+
+Multiple assignment:
+a, b = 0, 1
+
+# Fibonacci series:
+# the sum of two elements defines the next
+a, b = 0, 1
+while a < 10:
+    print(a)
+    a, b = b, a+b
+
+When a compound statement is entered interactively, it must be followed by a blank line to indicate completion (since the parser cannot guess when you have typed the last line). Note that each line within a basic block must be indented by the same amount.
+
+i = 256*256
+print('The value of i is', i)
+The value of i is 65536
+
+The keyword argument end can be used to avoid the newline after the output, or end the output with a different string:
+
+a, b = 0, 1
+while a < 1000:
+    print(a, end=',')
+    a, b = b, a+b
+
+0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,
+
+Unlike other languages, special characters such as \n have the same meaning with both single ('...') and double ("...") quotes. The only difference between the two is that within single quotes you don’t need to escape " (but you have to escape \') and vice versa.

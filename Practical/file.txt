@@ -1,0 +1,4 @@
+The next steps can be:
+> Tkinter for GUI
+> django and Flask
+> AI/ML

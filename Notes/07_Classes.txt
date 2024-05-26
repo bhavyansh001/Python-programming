@@ -1,0 +1,401 @@
+Python classes provide all the standard features of Object Oriented Programming: the class inheritance mechanism allows multiple base classes, a derived class can override any methods of its base class or classes, and a method can call the method of a base class with the same name. Objects can contain arbitrary amounts and kinds of data. As is true for modules, classes partake of the dynamic nature of Python: they are created at runtime, and can be modified further after creation.
+
+For example, passing an object is cheap since only a pointer is passed by the implementation; and if a function modifies an object passed as an argument, the caller will see the change — this eliminates the need for two different argument passing mechanisms. 
+This statement is describing a feature of Python's argument passing mechanism, which is based on passing object references rather than values.
+
+In Python, when a function is called with an argument, a reference to the object is passed to the function rather than a copy of the object. This means that passing an object as an argument is generally a cheap operation, since only a pointer to the object needs to be passed. This is in contrast to other programming languages where passing objects by value can be expensive.
+
+One advantage of passing object references in Python is that if a function modifies an object passed as an argument, the caller will see the change. This eliminates the need for two different argument passing mechanisms, one for read-only arguments and another for mutable arguments.
+
+For example, consider the following function that modifies a list passed as an argument:
+
+```
+def append_item(lst, item):
+    lst.append(item)
+```
+
+If we call this function with a list as the first argument, the function will modify the original list:
+
+```
+>>> my_list = [1, 2, 3]
+>>> append_item(my_list, 4)
+>>> print(my_list)
+[1, 2, 3, 4]
+```
+
+In this example, the `append_item()` function modifies the `lst` argument by appending the `item` argument to it. Because lists are mutable objects in Python, the caller (`my_list` in this case) sees the changes made to the list inside the function.
+
+Overall, Python's object reference argument passing mechanism allows for efficient and flexible argument passing, and eliminates the need for separate mechanisms for read-only and mutable arguments.
+
+In the expression modname.funcname, modname is a module object and funcname is an attribute of it.
+
+Attributes may be read-only or writable. In the latter case, assignment to attributes is possible. Module attributes are writable: you can write modname.the_answer = 42. Writable attributes may also be deleted with the del statement. For example, del modname.the_answer will remove the attribute the_answer from the object named by modname.
+
+The global statement can be used to indicate that particular variables live in the global scope and should be rebound there; the nonlocal statement indicates that particular variables live in an enclosing scope and should be rebound there.
+
+Scopes and Namespaces Example
+This is an example demonstrating how to reference the different scopes and namespaces, and how global and nonlocal affect variable binding:
+
+def scope_test():
+    def do_local():
+        spam = "local spam"
+
+    def do_nonlocal():
+        nonlocal spam
+        spam = "nonlocal spam"
+
+    def do_global():
+        global spam
+        spam = "global spam"
+
+    spam = "test spam"
+    do_local()
+    print("After local assignment:", spam)
+    do_nonlocal()
+    print("After nonlocal assignment:", spam)
+    do_global()
+    print("After global assignment:", spam)
+
+scope_test()
+print("In global scope:", spam)
+The output of the example code is:
+
+After local assignment: test spam
+After nonlocal assignment: nonlocal spam
+After global assignment: nonlocal spam
+In global scope: global spam
+Note how the local assignment (which is default) didn’t change scope_test's binding of spam. The nonlocal assignment changed scope_test's binding of spam, and the global assignment changed the module-level binding.
+
+You can also see that there was no previous binding for spam before the global assignment.
+
+__doc__ is also a valid attribute, returning the docstring belonging to the class: "A simple example class".
+class MyClass:
+    """A simple example class"""
+    i = 12345
+
+    def f(self):
+        return 'hello world'
+
+Class objects support two kinds of operations: attribute references and instantiation. MyClass.i and MyClass.f are valid attribute references, returning an integer and a function object.
+Class instantiation uses function notation.  x = MyClass()
+creates a new instance of the class and assigns this object to the local variable x.
+The instantiation operation (“calling” a class object) creates an empty object. Many classes like to create objects with instances customized to a specific initial state. Therefore a class may define a special method named __init__(), like this:
+
+def __init__(self):
+    self.data = []
+When a class defines an __init__() method, class instantiation automatically invokes __init__() for the newly created class instance. So in this example, a new, initialized instance can be obtained by:
+
+x = MyClass()
+Of course, the __init__() method may have arguments for greater flexibility. In that case, arguments given to the class instantiation operator are passed on to __init__(). For example,
+
+class Complex:
+    def __init__(self, realpart, imagpart):
+        self.r = realpart
+        self.i = imagpart
+
+x = Complex(3.0, -4.5)
+x.r, x.i
+(3.0, -4.5)
+
+ A method is a function that “belongs to” an object.
+xf = x.f
+while True:
+    print(xf())
+will continue to print hello world until the end of time.
+Surely Python raises an exception when a function that requires an argument is called without any — even if the argument isn’t actually used…
+
+Actually, you may have guessed the answer: the special thing about methods is that the instance object is passed as the first argument of the function. In our example, the call x.f() is exactly equivalent to MyClass.f(x).
+
+Class and instance variables:
+class Dog:
+
+    kind = 'canine'         # class variable shared by all instances
+
+    def __init__(self, name):
+        self.name = name    # instance variable unique to each instance
+
+>>> d = Dog('Fido')
+>>> e = Dog('Buddy')
+>>> d.kind                  # shared by all dogs
+'canine'
+>>> e.kind                  # shared by all dogs
+'canine'
+>>> d.name                  # unique to d
+'Fido'
+>>> e.name                  # unique to e
+'Buddy'
+
+he tricks list in the following code should not be used as a class variable because just a single list would be shared by all Dog instances:
+
+class Dog:
+
+    tricks = []             # mistaken use of a class variable
+
+    def __init__(self, name):
+        self.name = name
+
+    def add_trick(self, trick):
+        self.tricks.append(trick)
+
+>>> d = Dog('Fido')
+>>> e = Dog('Buddy')
+>>> d.add_trick('roll over')
+>>> e.add_trick('play dead')
+>>> d.tricks                # unexpectedly shared by all dogs
+['roll over', 'play dead']
+Correct design of the class should use an instance variable instead:
+
+class Dog:
+
+    def __init__(self, name):
+        self.name = name
+        self.tricks = []    # creates a new empty list for each dog
+
+    def add_trick(self, trick):
+        self.tricks.append(trick)
+
+>>> d = Dog('Fido')
+>>> e = Dog('Buddy')
+>>> d.add_trick('roll over')
+>>> e.add_trick('play dead')
+>>> d.tricks
+['roll over']
+>>> e.tricks
+['play dead']
+
+If the same attribute name occurs in both an instance and in a class, then attribute lookup prioritizes the instance:
+
+class Warehouse:
+   purpose = 'storage'
+   region = 'west'
+
+w1 = Warehouse()
+print(w1.purpose, w1.region)
+storage west
+w2 = Warehouse()
+w2.region = 'east'
+print(w2.purpose, w2.region)
+storage east
+
+Often, the first argument of a method is called self. This is nothing more than a convention: the name self has absolutely no special meaning to Python. Note, however, that by not following the convention your code may be less readable to other Python programmers, and it is also conceivable that a class browser program might be written that relies upon such a convention.
+
+It is not necessary that the function definition is textually enclosed in the class definition: assigning a function object to a local variable in the class is also ok. For example:
+
+# Function defined outside the class
+def f1(self, x, y):
+    return min(x, x+y)
+
+class C:
+    f = f1
+
+    def g(self):
+        return 'hello world'
+
+    h = g
+Now f, g and h are all attributes of class C that refer to function objects, and consequently they are all methods of instances of C — h being exactly equivalent to g.
+
+Methods may call other methods by using method attributes of the self argument:
+
+class Bag:
+    def __init__(self):
+        self.data = []
+
+    def add(self, x):
+        self.data.append(x)
+
+    def addtwice(self, x):
+        self.add(x)
+        self.add(x)
+Each value is an object, and therefore has a class (also called its type). It is stored as object.__class__.
+
+Inheritance
+The name BaseClassName must be defined in a scope containing the derived class definition. In place of a base class name, other arbitrary expressions are also allowed. This can be useful, for example, when the base class is defined in another module:
+
+class DerivedClassName(modname.BaseClassName):
+.
+.
+.
+
+Python has two built-in functions that work with inheritance:
+
+Use isinstance() to check an instance’s type: isinstance(obj, int) will be True only if obj.__class__ is int or some class derived from int.
+
+Use issubclass() to check class inheritance: issubclass(bool, int) is True since bool is a subclass of int. However, issubclass(float, int) is False since float is not a subclass of int.
+Multiple inheritances
+class DerivedClassName(Base1, Base2, Base3):
+    <statement-1>
+    .
+    .
+    .
+    <statement-N>
+
+However, there is a convention that is followed by most Python code: a name prefixed with an underscore (e.g. _spam)
+Since there is a valid use-case for class-private members (namely to avoid name clashes of names with names defined by subclasses), there is limited support for such a mechanism, called name mangling. Any identifier of the form __spam (at least two leading underscores, at most one trailing underscore) is textually replaced with _classname__spam, where classname is the current class name with leading underscore(s) stripped. This mangling is done without regard to the syntactic position of the identifier, as long as it occurs within the definition of a class.
+
+Name mangling is helpful for letting subclasses override methods without breaking intraclass method calls. For example:
+
+class Mapping:
+    def __init__(self, iterable):
+        self.items_list = []
+        self.__update(iterable)
+
+    def update(self, iterable):
+        for item in iterable:
+            self.items_list.append(item)
+
+    __update = update   # private copy of original update() method
+
+class MappingSubclass(Mapping):
+
+    def update(self, keys, values):
+        # provides new signature for update()
+        # but does not break __init__()
+        for item in zip(keys, values):
+            self.items_list.append(item)
+The above example would work even if MappingSubclass were to introduce a __update identifier since it is replaced with _Mapping__update in the Mapping class and _MappingSubclass__update in the MappingSubclass class respectively.
+
+Note that the mangling rules are designed mostly to avoid accidents; it still is possible to access or modify a variable that is considered private. This can even be useful in special circumstances, such as in the debugger.
+
+Notice that code passed to exec() or eval() does not consider the classname of the invoking class to be the current class; this is similar to the effect of the global statement, the effect of which is likewise restricted to code that is byte-compiled together. The same restriction applies to getattr(), setattr() and delattr(), as well as when referencing __dict__ directly. Mangling rules are primarily designed to prevent accidental access to private attributes.
+
+ Odds and Ends
+Sometimes it is useful to have a data type similar to the Pascal “record” or C “struct”, bundling together a few named data items. The idiomatic approach is to use dataclasses for this purpose:
+
+from dataclasses import dataclass
+
+@dataclass
+class Employee:
+    name: str
+    dept: str
+    salary: int
+>>>
+john = Employee('john', 'computer lab', 1000)
+john.dept
+'computer lab'
+john.salary
+1000
+A piece of Python code that expects a particular abstract data type can often be passed a class that emulates the methods of that data type instead. For instance, if you have a function that formats some data from a file object, you can define a class with methods read() and readline() that get the data from a string buffer instead, and pass it as an argument.
+
+Instance method objects have attributes, too: m.__self__ is the instance object with the method m(), and m.__func__ is the function object corresponding to the method.
+
+Iterators
+By now you have probably noticed that most container objects can be looped over using a for statement:
+
+for element in [1, 2, 3]:
+    print(element)
+for element in (1, 2, 3):
+    print(element)
+for key in {'one':1, 'two':2}:
+    print(key)
+for char in "123":
+    print(char)
+for line in open("myfile.txt"):
+    print(line, end='')
+This style of access is clear, concise, and convenient. The use of iterators pervades and unifies Python. Behind the scenes, the for statement calls iter() on the container object. The function returns an iterator object that defines the method __next__() which accesses elements in the container one at a time. When there are no more elements, __next__() raises a StopIteration exception which tells the for loop to terminate. You can call the __next__() method using the next() built-in function; this example shows how it all works:
+
+s = 'abc'
+it = iter(s)
+it
+<str_iterator object at 0x10c90e650>
+next(it)
+'a'
+next(it)
+'b'
+next(it)
+'c'
+next(it)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+    next(it)
+StopIteration
+Having seen the mechanics behind the iterator protocol, it is easy to add iterator behavior to your classes. Define an __iter__() method which returns an object with a __next__() method. If the class defines __next__(), then __iter__() can just return self:
+
+class Reverse:
+    """Iterator for looping over a sequence backwards."""
+    def __init__(self, data):
+        self.data = data
+        self.index = len(data)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index == 0:
+            raise StopIteration
+        self.index = self.index - 1
+        return self.data[self.index]
+rev = Reverse('spam')
+iter(rev)
+<__main__.Reverse object at 0x00A1DB50>
+for char in rev:
+    print(char)
+
+m
+a
+p
+s
+
+Generators
+Generators are a simple and powerful tool for creating iterators. They are written like regular functions but use the yield statement whenever they want to return data. Each time next() is called on it, the generator resumes where it left off (it remembers all the data values and which statement was last executed). An example shows that generators can be trivially easy to create:
+
+def reverse(data):
+    for index in range(len(data)-1, -1, -1):
+        yield data[index]
+>>>
+for char in reverse('golf'):
+    print(char)
+
+f
+l
+o
+g
+Anything that can be done with generators can also be done with class-based iterators as described in the previous section. What makes generators so compact is that the __iter__() and __next__() methods are created automatically.
+
+Another key feature is that the local variables and execution state are automatically saved between calls. This made the function easier to write and much more clear than an approach using instance variables like self.index and self.data.
+
+In addition to automatic method creation and saving program state, when generators terminate, they automatically raise StopIteration. In combination, these features make it easy to create iterators with no more effort than writing a regular function.
+Generators have several advantages over other types of iterables in Python. One of the main advantages is that they are memory-efficient, as they generate values on the fly instead of storing them all in memory. This makes them particularly useful for working with large datasets or infinite sequences.
+
+Another advantage of generators is that they can be used to create complex sequences or algorithms that are difficult to generate using other methods. For example, a generator can be used to generate a sequence of prime numbers or to perform a depth-first search of a tree data structure.
+
+To create a generator in Python, you can define a function that uses the yield keyword to generate values one at a time. Here is an example of a generator function that generates an infinite sequence of integers starting from a given value:
+
+def infinite_sequence(start=0):
+    num = start
+    while True:
+        yield num
+        num += 1
+To use this generator function, you can create a generator object by calling the function and then iterate over the object using a for loop or the next() function:
+
+# Create a generator object
+seq = infinite_sequence(1)
+
+# Iterate over the generator object using a for loop
+for i in range(5):
+    print(next(seq))
+
+# Output: 1, 2, 3, 4, 5
+
+Generator Expressions
+Some simple generators can be coded succinctly as expressions using a syntax similar to list comprehensions but with parentheses instead of square brackets. These expressions are designed for situations where the generator is used right away by an enclosing function. Generator expressions are more compact but less versatile than full generator definitions and tend to be more memory friendly than equivalent list comprehensions.
+
+Examples:
+
+>>>
+sum(i*i for i in range(10))                 # sum of squares
+285
+
+xvec = [10, 20, 30]
+yvec = [7, 5, 3]
+sum(x*y for x,y in zip(xvec, yvec))         # dot product
+260
+
+unique_words = set(word for line in page  for word in line.split())
+
+valedictorian = max((student.gpa, student.name) for student in graduates)
+
+data = 'golf'
+list(data[i] for i in range(len(data)-1, -1, -1))
+['f', 'l', 'o', 'g']
+
+range(len(data)-1, -1, -1): creates a range object that starts at the index of the last element in the list (len(data)-1), ends at -1 (which is the index of the first element in the list minus one), and decrements by 1 each time (-1).

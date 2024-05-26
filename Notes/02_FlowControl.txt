@@ -1,0 +1,216 @@
+if
+
+x = int(input("Please enter an integer: "))
+Please enter an integer: 42
+if x < 0:
+    x = 0
+    print('Negative changed to zero')
+elif x == 0:
+    print('Zero')
+elif x == 1:
+    print('Single')
+else:
+    print('More')
+
+More
+
+for
+# Measure some strings:
+words = ['cat', 'window', 'defenestrate']
+for w in words:
+    print(w, len(w))
+
+cat 3
+window 6
+defenestrate 12
+
+range
+for i in range(5):
+    print(i)
+
+0
+1
+2
+3
+4
+
+list(range(5, 10))
+[5, 6, 7, 8, 9]
+
+list(range(0, 10, 3))
+[0, 3, 6, 9]
+
+list(range(-10, -100, -30))
+[-10, -40, -70]
+To iterate over the indices of a sequence, you can combine range() and len() as follows:
+
+>>>
+a = ['Mary', 'had', 'a', 'little', 'lamb']
+for i in range(len(a)):
+    print(i, a[i])
+
+0 Mary
+1 had
+2 a
+3 little
+4 lamb
+
+better to use enumerate()
+seasons = ['Spring', 'Summer', 'Fall', 'Winter']
+list(enumerate(seasons))
+[(0, 'Spring'), (1, 'Summer'), (2, 'Fall'), (3, 'Winter')]
+list(enumerate(seasons, start=1))
+[(1, 'Spring'), (2, 'Summer'), (3, 'Fall'), (4, 'Winter')]
+
+A strange thing happens if you just print a range:
+
+range(10)
+range(0, 10)
+In many ways the object returned by range() behaves as if it is a list, but in fact it isn’t. It is an object which returns the successive items of the desired sequence when you iterate over it, but it doesn’t really make the list, thus saving space.
+
+sum(range(4))  # 0 + 1 + 2 + 3
+6
+
+
+Loop statements may have an else clause; it is executed when the loop terminates through exhaustion of the iterable (with for) or when the condition becomes false (with while), but not when the loop is terminated by a break statement. This is exemplified by the following loop, which searches for prime numbers:
+
+>>>
+for n in range(2, 10):
+    for x in range(2, n):
+        if n % x == 0:
+            print(n, 'equals', x, '*', n//x)
+            break
+    else:
+        # loop fell through without finding a factor
+        print(n, 'is a prime number')
+
+2 is a prime number
+3 is a prime number
+4 equals 2 * 2
+5 is a prime number
+6 equals 2 * 3
+7 is a prime number
+8 equals 2 * 4
+9 equals 3 * 3
+(Yes, this is the correct code. Look closely: the else clause belongs to the for loop, not the if statement.)
+
+The continue statement continues with the next iteration of the loop:
+
+for num in range(2, 10):
+    if num % 2 == 0:
+        print("Found an even number", num)
+        continue
+    print("Found an odd number", num)
+
+Found an even number 2
+Found an odd number 3
+Found an even number 4
+Found an odd number 5
+Found an even number 6
+Found an odd number 7
+Found an even number 8
+Found an odd number 9
+
+pass
+The pass statement does nothing. It can be used when a statement is required syntactically but the program requires no action. For example:
+
+while True:
+    pass  # Busy-wait for keyboard interrupt (Ctrl+C)
+
+This is commonly used for creating minimal classes:
+
+class MyEmptyClass:
+    pass
+
+match statement
+A match statement takes an expression and compares its value to successive patterns given as one or more case blocks.
+
+The simplest form compares a subject value against one or more literals:
+
+def http_error(status):
+    match status:
+        case 400:
+            return "Bad request"
+        case 404:
+            return "Not found"
+        case 418:
+            return "I'm a teapot"
+        case _:
+            return "Something's wrong with the internet"
+Note the last block: the “variable name” _ acts as a wildcard and never fails to match. If no case matches, none of the branches is executed.
+
+You can combine several literals in a single pattern using | (“or”):
+
+case 401 | 403 | 404:
+    return "Not allowed"
+
+# point is an (x, y) tuple
+match point:
+    case (0, 0):
+        print("Origin")
+    case (0, y):
+        print(f"Y={y}")
+    case (x, 0):
+        print(f"X={x}")
+    case (x, y):
+        print(f"X={x}, Y={y}")
+    case _:
+        raise ValueError("Not a point")
+
+If you are using classes to structure your data you can use the class name followed by an argument list resembling a constructor, but with the ability to capture attributes into variables:
+
+class Point:
+    x: int
+    y: int
+
+def where_is(point):
+    match point:
+        case Point(x=0, y=0):
+            print("Origin")
+        case Point(x=0, y=y):
+            print(f"Y={y}")
+        case Point(x=x, y=0):
+            print(f"X={x}")
+        case Point():
+            print("Somewhere else")
+        case _:
+            print("Not a point")
+
+Patterns can be arbitrarily nested. For example, if we have a short list of points, we could match it like this:
+
+match points:
+    case []:
+        print("No points")
+    case [Point(0, 0)]:
+        print("The origin")
+    case [Point(x, y)]:
+        print(f"Single point {x}, {y}")
+    case [Point(0, y1), Point(0, y2)]:
+        print(f"Two on the Y axis at {y1}, {y2}")
+    case _:
+        print("Something else")
+We can add an if clause to a pattern, known as a “guard”. If the guard is false, match goes on to try the next case block. Note that value capture happens before the guard is evaluated:
+
+match point:
+    case Point(x, y) if x == y:
+        print(f"Y=X at {x}")
+    case Point(x, y):
+        print(f"Not on the diagonal")
+
+while tuple and list patterns are powerful tools for extracting values from sequences in Python, they cannot be used to extract values from iterators or strings.
+
+from enum import Enum
+class Color(Enum):
+    RED = 'red'
+    GREEN = 'green'
+    BLUE = 'blue'
+
+color = Color(input("Enter your choice of 'red', 'blue' or 'green': "))
+
+match color:
+    case Color.RED:
+        print("I see red!")
+    case Color.GREEN:
+        print("Grass is green")
+    case Color.BLUE:
+        print("I'm feeling the blues :(")
