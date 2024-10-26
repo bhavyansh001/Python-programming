@@ -120,3 +120,8 @@ def long_running_function(a, b):
 print(long_running_function(2, 3))
 print(long_running_function(2, 3))
 print(long_running_function(4, 3))
+
+# Enum: list of kw pairs
+x = ('Masala', 'Lemon', 'Ginger')
+y = enumerate(x)
+print(y)
